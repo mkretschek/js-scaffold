@@ -34,12 +34,16 @@
       require([
         'mocha',
 
+        // Modules without dependencies
         'test/extend',
         'test/inherit',
         'test/isarraylike',
         'test/noop',
         'test/returntrue',
-        'test/returnfalse'
+        'test/returnfalse',
+
+        // Modules with dependencies
+        'test/events'
       ], function () {
         mocha.run();
       });
