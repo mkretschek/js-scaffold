@@ -1,9 +1,9 @@
-support
-=======
+scaffold
+========
 
 A collection of support modules containing utilities commonly needed in JS
 projects. Much like [underscore][], but designed to be used by other AMD
-modules.
+modules, allowing to require just the tools your project need.
 
 
 Author
