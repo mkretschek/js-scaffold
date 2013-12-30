@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>support tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="../vendor/mocha-1.16.2.css" />
+
+    <!-- Requirements -->
+    <script src="../vendor/require-2.1.9.js"></script>
+
+    <script>
+      require.config({
+        baseUrl : window.location.pathname.split('test')[0],
+        urlArgs : 'h=' + (new Date()).getTime(),
+        paths : {
+          mocha     : 'vendor/mocha-1.16.2',
+          chai      : 'vendor/chai-1.8.1',
+          sinon     : 'vendor/sinon-1.7.3',
+          'sinon-chai' : 'vendor/sinon-chai-2.4.0'
+        }
+      });
+
+      require(['mocha'], function () {
+        mocha.setup('bdd');
+      });
+
+      require(['chai', 'sinon-chai'], function (chai, sinonChai) {
+        chai.use(sinonChai);
+        window.expect = chai.expect;
+      });
+
+      require([
+        'mocha',
+
+        'test/extend',
+        'test/inherit',
+        'test/noop',
+        'test/returntrue',
+        'test/returnfalse'
+      ], function () {
+        mocha.run();
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="mocha"></div>
+  </body>
+</html>
+
