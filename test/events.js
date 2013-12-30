@@ -1,6 +1,5 @@
 define([
   'src/events/event',
-  'src/events/type',
   'src/events',
   'test/events/type',
   'test/events/event',
@@ -8,7 +7,6 @@ define([
   'sinon'
 ], function (
   Event,
-  Type,
   events,
   testTypeEnum,
   testEventConstructor,
@@ -45,17 +43,6 @@ define([
       it('is our custom Event constructor', function () {
         expect(events.Event).to.equal(Event);
       });
-    });
-
-    describe('.Type', function () {
-      it('is accessible', function () {
-        expect(events.Type).to.exist;
-      });
-
-      it('is our types enumeration', function () {
-        expect(events.Type).to.equal(Type);
-      });
-
     });
 
     describe('.listen()', function () {

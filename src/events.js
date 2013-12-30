@@ -1,16 +1,13 @@
 define([
   './isarraylike',
-  './events/type',
   './events/event',
 ], function (
   isArrayLike,
-  Type,
   Event
 ) {
   'use strict';
 
-  var eventus = {
-    Type : Type,
+  var events = {
     Event : Event,
 
     _events : {},
@@ -23,7 +20,7 @@ define([
 
     addEventListener : function (target, eventType, listener) {
       var
-        eventData = eventus._events[eventType],
+        eventData = events._events[eventType],
         eventTargets,
         eventListeners,
         targetIndex,
@@ -33,7 +30,7 @@ define([
         i;
 
       if (!eventData) {
-        eventus._events[eventType] = {
+        events._events[eventType] = {
           targets : [target],
           listeners : [[listener]]
         };
@@ -68,17 +65,17 @@ define([
     },
 
     listen : function (target, eventType, fn) {
-      eventus.addEventListener(target, eventType, eventus.getListener(fn));
+      events.addEventListener(target, eventType, events.getListener(fn));
     },
 
     listenOnce : function (target, eventType, fn) {
-      eventus.addEventListener(target, eventType, eventus.getListener(fn, true));
+      events.addEventListener(target, eventType, events.getListener(fn, true));
     },
 
     unlisten : function (target, eventType, fn) {
       // Remove all listeners for all events
       if (!target && !eventType && !fn) {
-        eventus._events = {};
+        events._events = {};
         return;
       }
 
@@ -95,7 +92,7 @@ define([
 
 
       if (eventType) {
-        eventData = eventus._events[eventType];
+        eventData = events._events[eventType];
         if (!eventData) { return; }
 
         eventTargets = eventData.targets;
@@ -130,21 +127,21 @@ define([
         // If no target is given, remove events for all targets
         } else {
           for (i = 0, len = eventTargets.length; i < len; i++) {
-            eventus.unlisten(eventTargets[i], eventType, fn);
+            events.unlisten(eventTargets[i], eventType, fn);
           }
           return;
         }
 
         // Cleanup event data if all listeners have been removed
         if (!eventTargets.length) {
-          delete eventus._events[eventType];
+          delete events._events[eventType];
         }
 
       // If no type is given, remove events for all types
       } else {
-        for (key in eventus._events) {
-          if (eventus._events.hasOwnProperty(key)) {
-            eventus.unlisten(target, key, fn);
+        for (key in events._events) {
+          if (events._events.hasOwnProperty(key)) {
+            events.unlisten(target, key, fn);
           }
         }
       }
@@ -152,7 +149,7 @@ define([
 
     getListeners : function (target, eventType) {
       var
-        eventData = eventus._events[eventType],
+        eventData = events._events[eventType],
         targetIndex;
 
       // No listeners for the given event
@@ -168,7 +165,7 @@ define([
 
     trigger : function (target, eventType, params) {
       var
-        targetListeners = eventus.getListeners(target, eventType),
+        targetListeners = events.getListeners(target, eventType),
         unlistenList = [],
         evt,
         curr,
@@ -179,7 +176,7 @@ define([
       // No listeners
       if (!targetListeners) { return; }
 
-      evt = eventus.getEvent(target, eventType, params);
+      evt = events.getEvent(target, eventType, params);
 
       for (i = 0, len = targetListeners.length; i < len; i++) {
         curr = targetListeners[i];
@@ -192,7 +189,7 @@ define([
 
       if (unlistenList.length) {
         for (i = 0, len = unlistenList.length; i < len; i++) {
-          eventus.unlisten(target, eventType, unlistenList[i]);
+          events.unlisten(target, eventType, unlistenList[i]);
         }
       }
     },
@@ -219,5 +216,5 @@ define([
     }
   };
 
-  return eventus;
+  return events;
 });
