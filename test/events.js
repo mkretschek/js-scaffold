@@ -1,15 +1,15 @@
 define([
   'src/events/event',
   'src/events',
-  'test/events/type',
   'test/events/event',
+  'test/events/eventtype',
   'chai',
   'sinon'
 ], function (
   Event,
   events,
-  testTypeEnum,
   testEventConstructor,
+  testEventTypeEnum,
   chai
 ) {
   describe('events', function () {
@@ -32,7 +32,7 @@ define([
       unlisten();
     });
 
-    testTypeEnum();
+    testEventTypeEnum();
     testEventConstructor();
 
     describe('.Event', function () {

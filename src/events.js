@@ -201,15 +201,15 @@ define([
 
       var
         e = new Event(type, params),
-        detail = params && params.detail;
+        err = e.error || (e.detail && e.detail.error);
 
       e.target = target;
 
-      if (detail && detail.error) {
-        e.message = detail.error.message;
-        e.fileName = detail.error.fileName;
-        e.lineno = detail.error.lineno;
-        e.column = detail.error.column || detail.error.columnNumber;
+      if (err) {
+        e.message = err.message;
+        e.fileName = err.fileName;
+        e.lineno = err.lineno;
+        e.column = err.column || err.columnNumber;
       }
 
       return e;
