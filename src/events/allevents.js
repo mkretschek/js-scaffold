@@ -3,24 +3,24 @@ define([
   './html5events',
   './domevents',
   // './progressevents', // progress events are included in xmlhttprequest
-  // './batteryevents',
-  // './clipboardevents',
-  // './deviceevents',
-  // './indexeddbevents',
-  // './svgevents',
-  // './webaudioevents',
+  './batteryevents',
+  './clipboardevents',
+  './cssevents',
+  './deviceevents',
+  './indexeddbevents',
+  './svgevents',
   './xmlhttprequestevents'
 ], function (
   extend,
   Html5Events,
   DomEvents,
   // ProgressEvents,
-  // BatteryEvents,
-  // ClipboardEvents,
-  // DeviceEvents,
-  // IndexedDBEvents,
-  // SVGEvents,
-  // WebAudioEvents,
+  BatteryEvents,
+  ClipboardEvents,
+  CssEvents,
+  DeviceEvents,
+  IndexedDBEvents,
+  SVGEvents,
   XMLHttpRequestEvents
 ) {
   // EventType
@@ -28,13 +28,13 @@ define([
   return extend({},
     Html5Events,
     DomEvents,
-    // ProgressEvents, // progressevents
-    XMLHttpRequestEvents
-    // BatteryEvents,
-    // ClipboardEvents,
-    // DeviceEvents,
-    // IndexedDBEvents,
-    // SVGEvents,
-    // WebAudioEvents
+    // ProgressEvents,
+    XMLHttpRequestEvents,
+    BatteryEvents,
+    ClipboardEvents,
+    CssEvents,
+    DeviceEvents,
+    IndexedDBEvents,
+    SVGEvents
   );
 });
