@@ -1,220 +1,201 @@
 define([
+  './datastorage',
+  './isarray',
   './isarraylike',
   './events/event',
 ], function (
+  DataStorage,
+  isArray,
   isArrayLike,
   Event
 ) {
   'use strict';
 
-  var events = {
-    Event : Event,
+  var
+    _eventData = new DataStorage();
 
-    _events : {},
-
-    getListener : function (fn, once) {
-      var listener = {fn : fn};
-      if (once) { listener.once = true; }
-      return listener;
-    },
-
-    addEventListener : function (target, eventType, listener) {
-      var
-        eventData = events._events[eventType],
-        eventTargets,
-        eventListeners,
-        targetIndex,
-        targetListeners,
-        curr,
-        len,
-        i;
-
-      if (!eventData) {
-        events._events[eventType] = {
-          targets : [target],
-          listeners : [[listener]]
-        };
-        return;
-      }
-
-      eventTargets = eventData.targets;
-      eventListeners = eventData.listeners;
-      targetIndex = eventTargets.indexOf(target);
-
-      if (!~targetIndex) {
-        targetIndex = eventTargets.length;
-        eventTargets.push(target);
-        eventListeners[targetIndex] = [listener];
-        return;
-      }
-
-      targetListeners = eventListeners[targetIndex];
-
-      for (i = 0, len = targetListeners.length; i < len; i++) {
-        curr = targetListeners[i];
-        if (curr.fn === listener.fn) {
-          // listen() always overrides listenOnce()
-          if (curr.once && !listener.once) {
-            delete curr.once;
-          }
-          return;
-        }
-      }
-
-      targetListeners.push(listener);
-    },
-
-    listen : function (target, eventType, fn) {
-      events.addEventListener(target, eventType, events.getListener(fn));
-    },
-
-    listenOnce : function (target, eventType, fn) {
-      events.addEventListener(target, eventType, events.getListener(fn, true));
-    },
-
-    unlisten : function (target, eventType, fn) {
-      // Remove all listeners for all events
-      if (!target && !eventType && !fn) {
-        events._events = {};
-        return;
-      }
-
-      var
-        eventData,
-        eventTargets,
-        eventListeners,
-        targetIndex,
-        targetListeners,
-        key,
-        curr,
-        len,
-        i;
-
-
-      if (eventType) {
-        eventData = events._events[eventType];
-        if (!eventData) { return; }
-
-        eventTargets = eventData.targets;
-        eventListeners = eventData.listeners;
-
-        if (target) {
-          targetIndex = eventTargets.indexOf(target);
-          if (!~targetIndex) { return; }
-
-          targetListeners = eventListeners[targetIndex];
-
-          if (fn) {
-            for (i = 0, len = targetListeners.length; i < len; i++) {
-              if (targetListeners[i].fn === fn) {
-                targetListeners.splice(i, 1);
-                break;
-              }
-            }
-
-          // If no listener is given, remove all listeners
-          } else {
-            targetListeners = eventListeners[targetIndex] = [];
-          }
-
-          // Cleanup event targets and listeners if all listeners have been
-          // removed
-          if (!targetListeners.length) {
-            eventTargets.splice(targetIndex, 1);
-            eventListeners.splice(targetIndex, 1);
-          }
-
-        // If no target is given, remove events for all targets
-        } else {
-          for (i = 0, len = eventTargets.length; i < len; i++) {
-            events.unlisten(eventTargets[i], eventType, fn);
-          }
-          return;
-        }
-
-        // Cleanup event data if all listeners have been removed
-        if (!eventTargets.length) {
-          delete events._events[eventType];
-        }
-
-      // If no type is given, remove events for all types
-      } else {
-        for (key in events._events) {
-          if (events._events.hasOwnProperty(key)) {
-            events.unlisten(target, key, fn);
-          }
-        }
-      }
-    },
-
-    getListeners : function (target, eventType) {
-      var
-        eventData = events._events[eventType],
-        targetIndex;
-
-      // No listeners for the given event
-      if (!eventData) { return; }
-
-      targetIndex = eventData.targets.indexOf(target);
-
-      // No listeners for the given target
-      if (!~targetIndex) { return; }
-
-      return eventData.listeners[targetIndex];
-    },
-
-    trigger : function (target, eventType, params) {
-      var
-        targetListeners = events.getListeners(target, eventType),
-        unlistenList = [],
-        evt,
-        curr,
-        args,
-        len,
-        i;
-
-      // No listeners
-      if (!targetListeners) { return; }
-
-      evt = events.getEvent(target, eventType, params);
-
-      for (i = 0, len = targetListeners.length; i < len; i++) {
-        curr = targetListeners[i];
-        args = evt.detail && evt.detail.args ?
-          Array.prototype.slice.call(evt.detail.args, 0) : [];
-        args.splice(0, 0, evt);
-        curr.fn.apply(target, args);
-        if (curr.once) { unlistenList.push(curr.fn); }
-      }
-
-      if (unlistenList.length) {
-        for (i = 0, len = unlistenList.length; i < len; i++) {
-          events.unlisten(target, eventType, unlistenList[i]);
-        }
-      }
-    },
-
-    getEvent : function (target, type, params) {
-      if (isArrayLike(params)) {
-        params = {detail : {args : params}};
-      }
-
-      var
-        e = new Event(type, params),
-        err = e.error || (e.detail && e.detail.error);
-
-      e.target = target;
-
-      if (err) {
-        e.message = err.message;
-        e.fileName = err.fileName;
-        e.lineno = err.lineno;
-        e.column = err.column || err.columnNumber;
-      }
-
-      return e;
+  function _createListenerObject(fn, once) {
+    if (typeof fn !== 'function') {
+      throw(new TypeError('Invalid listener'));
     }
-  };
+    var listener = {fn : fn};
+    if (once) { listener.once = true; }
+    return listener;
+  }
 
-  return events;
+  function _getListenerIndex(listeners, fn) {
+    var
+      len,
+      i;
+
+    for (i = 0, len = listeners.length; i < len; i += 1) {
+      if (listeners[i].fn === fn) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  function _getEvent(target, eventType, params) {
+    if (isArrayLike(params)) {
+      params = {detail : {args : params}};
+    }
+
+    var
+      e = new Event(eventType, params),
+      err = e.error || (e.detail && e.detail.error);
+
+    e.target = target;
+
+    if (err) {
+      e.message = err.message;
+      e.fileName = err.fileName;
+      e.lineno = err.lineno;
+      e.column = err.column || err.columnNumber;
+    }
+
+    return e;
+  }
+
+  function _removeListener(target, eventType, listeners, fn) {
+    var
+      listenerIndex = _getListenerIndex(listeners, fn);
+
+    if (~listenerIndex) {
+      listeners.splice(listenerIndex, 1);
+      if (!listeners.length) {
+        _eventData.unset(target, eventType);
+      }
+    }
+  }
+
+  function _addEventListener(target, eventType, listener) {
+    var
+      listeners = _eventData.get(target, eventType),
+      listenerIndex = -1,
+      curr,
+      len,
+      i;
+
+    if (!listeners) {
+      _eventData.set(target, eventType, [listener]);
+      return;
+    }
+
+    listenerIndex = _getListenerIndex(listeners, listener.fn);
+
+    if (~listenerIndex) {
+      // The listener is already registered but was set to run only once,
+      // just remove the flag.
+      if (!listener.once && listeners[listenerIndex].once) {
+        delete listeners[listenerIndex].once;
+      }
+      return;
+    }
+
+    listeners.push(listener);
+  }
+
+  function listen(target, eventType, fn) {
+    _addEventListener(target, eventType, _createListenerObject(fn));
+  }
+
+  function listenOnce(target, eventType, fn) {
+    _addEventListener(target, eventType, _createListenerObject(fn, true));
+  }
+
+  function unlisten(target, eventType, fn) {
+    // Remove all listeners for all events
+    if (!target && !eventType && !fn) {
+      return _eventData.unset();
+    }
+
+    if (!fn) {
+      return _eventData.unset(target, eventType);
+    }
+
+    var
+      listeners = _eventData.get(target, eventType),
+      curr,
+      key,
+      len,
+      i;
+
+
+    if (!listeners) { return; }
+
+    // Remove the listener from the eventType on the target
+    if (target && eventType) {
+      return _removeListener(target, eventType, listeners, fn);
+    }
+
+    // Remove the listener from all eventTypes on the target
+    if (target) {
+      for (key in listeners) {
+        if (listeners.hasOwnProperty(key)) {
+          _removeListener(target, key, listeners[key], fn);
+        }
+      }
+      return;
+    }
+
+    // Remove the listener from the eventType on all targets
+    if (eventType) {
+      for (i = 0, len = listeners.objects.length; i < len; i += 1) {
+        _removeListener(listeners.objects[i], eventType, listeners.data[i], fn);
+      }
+      return;
+    }
+
+    // Remove the listener from all eventTypes on all targets
+    for (key in listeners) {
+      if (listeners.hasOwnProperty(key)) {
+        curr = listeners[key];
+        for (i = 0, len = curr.objects.length; i < len; i += 1) {
+          _removeListener(curr.objects[i], key, curr.data[i], fn);
+        }
+      }
+    }
+  }
+
+  function trigger(target, eventType, params) {
+    var
+      listeners = _eventData.get(target, eventType),
+      unlistenList = [],
+      args,
+      curr,
+      len,
+      i,
+      e;
+
+    if (!listeners) { return; }
+
+    e = _getEvent(target, eventType, params);
+
+    for (i = 0, len = listeners.length; i < len; i++) {
+      curr = listeners[i];
+      args = e.detail && e.detail.args ?
+        Array.prototype.slice.call(e.detail.args, 0) : [];
+      args.splice(0, 0, e);
+      curr.fn.apply(target, args);
+      if (curr.once) { unlistenList.push(curr.fn); }
+    }
+
+    if (unlistenList.length) {
+      for (i = 0, len = unlistenList.length; i < len; i++) {
+        unlisten(target, eventType, unlistenList[i]);
+      }
+    }
+  }
+
+  return {
+    getListeners : function (target, eventType) {
+      return _eventData.get(target, eventType);
+    },
+    listen : listen,
+    listenOnce : listenOnce,
+    unlisten : unlisten,
+    trigger : trigger
+  };
 });

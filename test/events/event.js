@@ -3,10 +3,8 @@ define([
 ], function (
   Event
 ) {
-  return function () {
-    describe('Event constructor', function () {
-      // TODO: write Event tests
-      it('is a constructor');
-    });
-  };
+  describe('Event constructor', function () {
+    // TODO: write Event tests
+    it('is a constructor');
+  });
 });

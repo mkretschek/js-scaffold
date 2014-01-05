@@ -1,15 +1,14 @@
 define([
   'src/events/event',
   'src/events',
-  'test/events/event',
-  'test/events/eventtype',
   'chai',
-  'sinon'
+  'sinon',
+
+  'test/events/event',
+  'test/events/eventtype'
 ], function (
   Event,
   events,
-  testEventConstructor,
-  testEventTypeEnum,
   chai
 ) {
   describe('events', function () {
@@ -30,19 +29,6 @@ define([
 
     after(function () {
       unlisten();
-    });
-
-    testEventTypeEnum();
-    testEventConstructor();
-
-    describe('.Event', function () {
-      it('is accessible', function () {
-        expect(events.Event).to.exist;
-      });
-
-      it('is our custom Event constructor', function () {
-        expect(events.Event).to.equal(Event);
-      });
     });
 
     describe('.listen()', function () {
@@ -293,7 +279,7 @@ define([
         });
       }); // with event and listener
 
-      describe('with event only', function () {
+      describe('with eventType only', function () {
         it('removes all listeners for the event on all its targets',
           function () {
             listen(t1, 'foo', fn1);
@@ -371,9 +357,9 @@ define([
         });
 
         it('resets the event data object', function () {
-          var oldEvents = events._events;
+          var oldListeners = getListeners();
           unlisten();
-          expect(events._events).to.not.equal(oldEvents);
+          expect(oldListeners).to.not.equal(getListeners());
         });
       }); // without any arguments
     }); // .unlisten()
@@ -436,7 +422,7 @@ define([
       it('passes an event object as the first parameter to the listener',
         function () {
           trigger(target, 'foo');
-          expect(listener.lastCall.args[0]).to.be.instanceof(events.Event);
+          expect(listener.lastCall.args[0]).to.be.instanceof(Event);
         });
 
       it('sets the event\'s target property', function () {
