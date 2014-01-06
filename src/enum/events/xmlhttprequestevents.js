@@ -1,6 +1,6 @@
 define([
   './progressevents',
-  '../extend'
+  '../../extend'
 ], function (
   ProgressEvents,
   extend

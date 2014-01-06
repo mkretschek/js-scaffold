@@ -1,5 +1,5 @@
 define([
-  'src/events/event'
+  'src/event'
 ], function (
   Event
 ) {

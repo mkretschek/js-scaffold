@@ -1,15 +1,15 @@
 define([
   '../extend',
-  './html5events',
-  './domevents',
-  // './progressevents', // progress events are included in xmlhttprequest
-  './batteryevents',
-  './clipboardevents',
-  './cssevents',
-  './deviceevents',
-  './indexeddbevents',
-  './svgevents',
-  './xmlhttprequestevents'
+  './events/html5events',
+  './events/domevents',
+  // './events/progressevents', // progress events are included in xmlhttprequest
+  './events/batteryevents',
+  './events/clipboardevents',
+  './events/cssevents',
+  './events/deviceevents',
+  './events/indexeddbevents',
+  './events/svgevents',
+  './events/xmlhttprequestevents'
 ], function (
   extend,
   Html5Events,

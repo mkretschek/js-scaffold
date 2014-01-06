@@ -1,7 +1,7 @@
 define([
-  '../extend',
-  '../returntrue',
-  '../returnfalse'
+  './extend',
+  './returntrue',
+  './returnfalse'
 ], function (
   extend,
   returnTrue,

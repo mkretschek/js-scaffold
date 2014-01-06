@@ -1,5 +1,5 @@
 define([
-  'src/events/allevents'
+  'src/enum/eventtype'
 ], function (
   EventType
 ) {
