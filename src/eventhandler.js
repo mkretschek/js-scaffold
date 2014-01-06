@@ -60,13 +60,12 @@ define([
   }
 
 
-  function EventHandler() {
-    DataStorage.call(this);
+  function EventHandler(dataStorage) {
+    this.dataStorage = dataStorage || new DataStorage();
   }
 
-  inherit(EventHandler, DataStorage);
 
-  extend(EventHandler.prototype, {
+  EventHandler.prototype = {
     _removeListener : function (target, eventType, listeners, fn) {
       var
         listenerIndex = _getListenerIndex(listeners, fn);
@@ -74,21 +73,23 @@ define([
       if (~listenerIndex) {
         listeners.splice(listenerIndex, 1);
         if (!listeners.length) {
-          this.unset(target, eventType);
+          this.dataStorage.unset(target, eventType);
         }
       }
     },
 
     _addEventListener : function (target, eventType, listener) {
+      if (!target || !eventType || !listener) { return; }
+
       var
-        listeners = this.get(target, eventType),
+        listeners = this.dataStorage.get(target, eventType),
         listenerIndex = -1,
         curr,
         len,
         i;
 
       if (!listeners) {
-        this.set(target, eventType, [listener]);
+        this.dataStorage.set(target, eventType, [listener]);
         return;
       }
 
@@ -117,15 +118,15 @@ define([
     unlisten : function (target, eventType, fn) {
       // Remove all listeners for all events
       if (!target && !eventType && !fn) {
-        return this.unset();
+        return this.dataStorage.unset();
       }
 
       if (!fn) {
-        return this.unset(target, eventType);
+        return this.dataStorage.unset(target, eventType);
       }
 
       var
-        listeners = this.get(target, eventType),
+        listeners = this.dataStorage.get(target, eventType),
         curr,
         key,
         len,
@@ -175,7 +176,7 @@ define([
 
     trigger : function (target, eventType, params) {
       var
-        listeners = this.get(target, eventType),
+        listeners = this.dataStorage.get(target, eventType),
         unlistenList = [],
         args,
         curr,
@@ -203,8 +204,10 @@ define([
       }
     },
 
-    getListeners : DataStorage.prototype.get
-  });
+    getListeners : function (target, eventType) {
+      return this.dataStorage.get(target, eventType);
+    }
+  };
 
   EventHandler.Listener = Listener;
 

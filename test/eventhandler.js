@@ -14,16 +14,44 @@ define([
     var
       target,
       listener = sinon.spy(function () {}),
+      storage,
       handler;
 
     beforeEach(function () {
       target = {};
       listener.reset();
-      handler = new EventHandler();
+      storage = new DataStorage();
+      handler = new EventHandler(storage);
     });
 
-    it('is a constructor');
-    it('inherits from DataStorage');
+    it('is a constructor', function () {
+      expect(handler).to.be.instanceof(EventHandler);
+    });
+
+    it('allows setting a data storage', function () {
+      var
+        storage2 = new DataStorage(),
+        handler2 = new EventHandler(storage2);
+
+      expect(handler2.dataStorage).to.not.equal(handler.dataStorage);
+
+      expect(storage2.get()).to.be.empty;
+      console.log('>>>', typeof listener === 'function');
+      handler2.listen(target, 'foo', listener);
+      expect(storage2.get()).to.not.be.empty;
+      expect(storage.get()).to.be.empty;
+    });
+
+    it('creates a new data storage if none is given', function () {
+      var handler2 = new EventHandler();
+      expect(handler2.dataStorage).to.exist;
+      expect(handler2.dataStorage).to.be.instanceof(DataStorage);
+      expect(handler2.dataStorage).to.not.equal(handler.dataStorage);
+
+      expect(handler2.dataStorage.get()).to.be.empty;
+      handler2.listen(target, 'foo', listener);
+      expect(handler2.dataStorage.get()).to.not.be.empty;
+    });
 
     describe('#listen()', function () {
       it('is accessible', function () {
@@ -78,10 +106,6 @@ define([
         listeners = handler.getListeners(target, 'foo');
         expect(listeners[0].once).to.be.undefined;
       });
-
-      it('throws an error if no event type is given');
-      it('throws an error if no target is given');
-      it('throws an error if no listener is given');
     }); // .listen()
 
     describe('#listenOnce()', function () {
