@@ -34,8 +34,15 @@
       require([
         'mocha',
 
+        // Enumerations
+        'test/enum/eventtype',
+        'test/enum/state',
+
         // Modules without dependencies
+        'test/bitmaskenabled',
+        'test/bitmaskupdate',
         'test/datastorage',
+        'test/event',
         'test/extend',
         'test/inherit',
         'test/isarray',
@@ -45,7 +52,9 @@
         'test/returnfalse',
 
         // Modules with dependencies
-        'test/events'
+        'test/eventhandler',
+        'test/statehandler'
+        //'test/states'
       ], function () {
         mocha.run();
       });
