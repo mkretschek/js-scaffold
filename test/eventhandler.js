@@ -36,7 +36,6 @@ define([
       expect(handler2.dataStorage).to.not.equal(handler.dataStorage);
 
       expect(storage2.get()).to.be.empty;
-      console.log('>>>', typeof listener === 'function');
       handler2.listen(target, 'foo', listener);
       expect(storage2.get()).to.not.be.empty;
       expect(storage.get()).to.be.empty;

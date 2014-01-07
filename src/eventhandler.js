@@ -1,10 +1,12 @@
 define([
+  './addsingletongetter',
   './datastorage',
   './event',
   './inherit',
   './extend',
   './isarraylike'
 ], function (
+  addSingletonGetter,
   DataStorage,
   Event,
   inherit,
@@ -207,6 +209,8 @@ define([
   };
 
   EventHandler.Listener = Listener;
+
+  addSingletonGetter(EventHandler);
 
   return EventHandler;
 });
