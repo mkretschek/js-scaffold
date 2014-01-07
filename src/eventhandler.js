@@ -83,10 +83,7 @@ define([
 
       var
         listeners = this.dataStorage.get(target, eventType),
-        listenerIndex = -1,
-        curr,
-        len,
-        i;
+        listenerIndex = -1;
 
       if (!listeners) {
         this.dataStorage.set(target, eventType, [listener]);

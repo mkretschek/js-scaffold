@@ -7,7 +7,9 @@ define([
   returnTrue,
   returnFalse
 ) {
-  // From jQuery.Event: https://github.com/jquery/jquery/blob/7e8a91c205723f11cd00c8834f348a649ab15926/src/event.js#L662
+  'use strict';
+
+  // From jQuery.Event http://git.io/3Q4inA
   function Event(src, params) {
     // src is an Event object
     if (src && src.type) {

@@ -14,27 +14,30 @@ define([
   isArrayLike
 ) {
 
+  'use strict';
+
   function _getStateChangeEvent(state, enable) {
     switch (state) {
-      case State.ACTIVE:
-        return enable ? StateEvent.ACTIVATE : StateEvent.DEACTIVATE;
-      case State.ENABLED:
-        return enable ? StateEvent.ENABLE : StateEvent.DISABLE;
-      case State.VISIBLE:
-        return enable ? StateEvent.SHOW : StateEvent.HIDE;
-      case State.OPEN:
-        return enable ? StateEvent.OPEN : StateEvent.CLOSE;
-      case State.LOADED:
-        return enable ? StateEvent.LOAD : StateEvent.UNLOAD;
-      case State.DISPOSED:
-        // Disposed events should not be "undisposed"
-        if (enable) { return StateEvent.DISPOSE; }
-      case State.RENDERED:
-        // XXX: I couldn't find an antonym for "render" that wouldn't
-        // get confused with "hide" or "remove" (as from a list).
-        return enable ? StateEvent.RENDER : StateEvent.UNRENDER;
-      case State.INSTALLED:
-        return enable ? StateEvent.INSTALL : StateEvent.UNINSTALL;
+    case State.ACTIVE:
+      return enable ? StateEvent.ACTIVATE : StateEvent.DEACTIVATE;
+    case State.ENABLED:
+      return enable ? StateEvent.ENABLE : StateEvent.DISABLE;
+    case State.VISIBLE:
+      return enable ? StateEvent.SHOW : StateEvent.HIDE;
+    case State.OPEN:
+      return enable ? StateEvent.OPEN : StateEvent.CLOSE;
+    case State.LOADED:
+      return enable ? StateEvent.LOAD : StateEvent.UNLOAD;
+    case State.DISPOSED:
+      // Disposed events should not be "undisposed"
+      if (enable) { return StateEvent.DISPOSE; }
+      break;
+    case State.RENDERED:
+      // XXX: I couldn't find an antonym for "render" that wouldn't
+      // get confused with "hide" or "remove" (as from a list).
+      return enable ? StateEvent.RENDER : StateEvent.UNRENDER;
+    case State.INSTALLED:
+      return enable ? StateEvent.INSTALL : StateEvent.UNINSTALL;
     }
   }
 
@@ -114,7 +117,11 @@ define([
 
 
       if (bitmaskEnabled(targetFlags, flag) !== enable) {
-        this.dataStorage.set(target, field, bitmaskUpdate(targetFlags, flag, enable));
+        this.dataStorage.set(
+          target,
+          field,
+          bitmaskUpdate(targetFlags, flag, enable)
+        );
         trigger.call(this, target, flag, enable);
       }
     },

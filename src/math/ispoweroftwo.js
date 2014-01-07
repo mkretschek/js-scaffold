@@ -8,6 +8,6 @@ define([
   // isPowerOfTwo()
   return function (val) {
     if (!isNumeric(val)) { return false; }
-    return !!(val && !(val & (val - 1)))
+    return !!(val && !(val & (val - 1)));
   };
 });
