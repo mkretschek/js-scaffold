@@ -1,6 +1,7 @@
 define([
   './enum/events/statehandlerevents',
   './enum/state',
+  './addsingletongetter',
   './bitmaskenabled',
   './bitmaskupdate',
   './datastorage',
@@ -8,6 +9,7 @@ define([
 ], function (
   StateEvent,
   State,
+  addSingletonGetter,
   bitmaskEnabled,
   bitmaskUpdate,
   DataStorage,
@@ -188,6 +190,8 @@ define([
       return this._hasFlag(target, '_states', state);
     }
   };
+
+  addSingletonGetter(StateHandler);
 
   return StateHandler;
 });
