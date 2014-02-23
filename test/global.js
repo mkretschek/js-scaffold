@@ -12,6 +12,10 @@ define([
 
     it('is the global object', function () {
       expect(global).to.equal(currentGlobal);
+
+      if (window) {
+        expect(global).to.equal(window);
+      }
     });
   });
 });
