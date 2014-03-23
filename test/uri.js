@@ -206,7 +206,6 @@ define([
       it('allows the occurrence of the equal sign (\'=\') in the value',
         function () {
           var query = URI.parseQueryString('foo=bar=baz');
-          console.log(query);
           expect(query.foo).to.eql(['bar=baz']);
         });
 
