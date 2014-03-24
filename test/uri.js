@@ -65,6 +65,8 @@ define([
 
 
 
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     describe('data attribute', function () {
       var
         ATTRIBUTES,
@@ -85,26 +87,32 @@ define([
         'hostname'
       ];
 
-      for (i = 0, len = ATTRIBUTES.length; i < len; i += 1) {
-        attr = ATTRIBUTES[i];
 
-        describe('.' + attr, function () {
+      function describeUriAttribute(attr) {
+        return function () {
           it('is accessible', function () {
             var uri = URI();
             expect(uri[attr]).not.to.be.undefined;
           });
 
-
           it('is null by default', function () {
             var uri = URI();
             expect(uri[attr]).to.be.null;
           });
-        });
+        };
+      }
+
+
+      for (i = 0, len = ATTRIBUTES.length; i < len; i += 1) {
+        attr = ATTRIBUTES[i];
+        describe('.' + attr, describeUriAttribute(attr));
       }
 
     }); // data attributes
 
 
+    ///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
     describe('.parseAuthority()', function () {
       it('is accessible', function () {
         expect(URI.parseAuthority).to.exist;

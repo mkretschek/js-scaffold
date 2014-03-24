@@ -197,7 +197,6 @@ define([
       path,
       query,
       fragment,
-      uri,
       result;
 
       

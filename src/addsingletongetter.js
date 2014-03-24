@@ -2,13 +2,13 @@ define(function () {
   'use strict';
 
   // addSingletonGetter()
-  return function (cstr) {
-    cstr.getSingleton = function () {
-      if (!cstr._singleton) {
-        cstr._singleton = new cstr;
+  return function (Constructor) {
+    Constructor.getSingleton = function () {
+      if (!Constructor._singleton) {
+        Constructor._singleton = new Constructor();
       }
 
-      return cstr._singleton;
+      return Constructor._singleton;
     };
   };
 });
