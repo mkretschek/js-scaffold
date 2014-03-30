@@ -2,8 +2,7 @@ define([
   'src/enum/state',
   'src/enum/events/statehandlerevents',
   'src/eventhandler',
-  'src/statehandler',
-  'sinon'
+  'src/statehandler'
 ], function (
   State,
   StateEvent,

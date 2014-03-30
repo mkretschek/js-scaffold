@@ -1,14 +1,11 @@
 define([
   'src/event',
   'src/eventhandler',
-  'src/datastorage',
-  'chai',
-  'sinon'
+  'src/datastorage'
 ], function (
   Event,
   EventHandler,
-  DataStorage,
-  chai
+  DataStorage
 ) {
   describe('EventHandler constructor', function () {
     var
